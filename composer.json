@@ -1,45 +1,49 @@
 {
-    "name": "mariojgt/biscotto",
-    "description": "A Laravel Package Biscotto, will help you enable and disable cookies or scripts that required gdpr compliance.",
-    "keywords": [
-        "laravel",
-        "GDPR",
-        "Cookie manager",
-        "cookie",
-        "cookie gdpr",
-        "script gdpr",
-        "analytics",
-        "gdpr laravel",
-        "laravel gdpr"
-    ],
-    "type": "laravel",
-    "license": "MIT",
-    "authors": [
-        {
-            "name": "mario",
-            "email": "mariojgt2@gmail.com"
-        }
-    ],
-    "require": {
-        "php": "^7.3|^8.0"
+  "name": "mariojgt/biscotto",
+  "description": "A Laravel Package, Biscotto will help you to enable and disable cookies or scripts as required for GDPR compliance.",
+  "keywords": [
+    "laravel",
+    "GDPR",
+    "Cookie manager",
+    "cookie",
+    "cookie gdpr",
+    "script gdpr",
+    "analytics",
+    "gdpr laravel",
+    "laravel gdpr"
+  ],
+  "type": "laravel",
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "mario",
+      "email": "mariojgt2@gmail.com"
     },
-    "autoload": {
-        "psr-4": {
-            "Mariojgt\\Biscotto\\": "src"
-        }
-    },
-    "scripts": {
-        "post-autoload-dump": [
-            "@php artisan route:list"
-        ]
-    },
-    "extra": {
-        "laravel": {
-            "providers": [
-                "Mariojgt\\Biscotto\\BiscottoProvider"
-            ]
-        }
-    },
-    "minimum-stability": "dev",
-    "prefer-stable": true
+    {
+      "name": "Craig Riley",
+      "email": "c.riley@dsmdesign.co.uk"
+    }
+  ],
+  "require": {
+    "php": "^7.3|^8.0"
+  },
+  "autoload": {
+    "psr-4": {
+      "Mariojgt\\Biscotto\\": "src"
+    }
+  },
+  "scripts": {
+    "post-autoload-dump": [
+      "@php artisan route:list"
+    ]
+  },
+  "extra": {
+    "laravel": {
+      "providers": [
+        "Mariojgt\\Biscotto\\BiscottoProvider"
+      ]
+    }
+  },
+  "minimum-stability": "dev",
+  "prefer-stable": true
 }

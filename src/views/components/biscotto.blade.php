@@ -14,15 +14,20 @@
     }
 
     .cookie-card {
-        padding: 1.2rem;
+        padding: 0.5rem 1.2rem;
         background-color: #fff;
         text-align: center;
-        box-shadow: 1px 3px 5px 1px rgba(0, 0, 0, .1);
+        border-top: 1px solid rgba(0, 0, 0, 0.4);
+        box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
     }
 
     .cookie-card h3 {
         font-size: 21px;
-        padding: 20px;
+        padding: 0.5rem 1rem;
+    }
+
+    .cookie-card .cookie-message {
+        margin-bottom: 1rem;
     }
 
     .cookie-card p {
@@ -36,6 +41,7 @@
         justify-content: center;
         align-items: center;
         gap: 20px;
+        margin-bottom: 1rem;
     }
 
     .cookie-btn {
@@ -65,45 +71,38 @@
         background-color: #fa7885;
     }
 
-    /* .setting{
-  position:absolute;
-  top:0;
-  left:0;
-  bottom:0;
-  right:0;
-} */
     .setting .header {
         display: flex;
         align-items: center;
     }
 
-    .setting .contents {
+    .biscotto__switches {
         display: flex;
         justify-content: space-evenly;
-        /* flex-wrap:wrap; */
         margin-top: 20px;
         gap: 20px;
     }
 
-    .switch .contents .content {
+    .biscotto__switch {
         display: flex;
         justify-content: space-evenly;
         align-items: center;
     }
 
-    .content span {
+    .biscotto__switch--label {
         font-size: 14px;
-        /*   margin-right:10px; */
+        margin-right: 0.5rem;
+        font-weight: bold;
     }
 
-    .switch {
+    .biscotto__switch--input {
         position: relative;
         display: inline-block;
         width: 60px;
         height: 30px;
     }
 
-    .switch input {
+    .biscotto__switch--input input {
         width: 0;
         height: 0;
         opacity: 0;
@@ -133,15 +132,15 @@
         transition: inherit;
     }
 
-    .switch input:checked+.biscotto-rounded {
+    .biscotto__switch--input input:checked+.biscotto-rounded {
         background-color: #81D9CD;
     }
 
-    .switch input:focus+.biscotto-rounded {
+    .biscotto__switch--input input:focus+.biscotto-rounded {
         box-shadow: 0 0 1px #2196F3;
     }
 
-    .switch input:checked+.biscotto-rounded:before {
+    .biscotto__switch--input input:checked+.biscotto-rounded:before {
         -webkit-transform: translateX(30px);
         -ms-transform: translateX(30px);
         transform: translateX(30px);
@@ -159,19 +158,74 @@
 
 </style>
 
+{{ $slot }}
+
+<div class="cookie-container" id="cookie-plugin" style="display: none;">
+    <div class="cookie-card main">
+        <h3 style="color: black">{{ __('biscotto.allow_cookie') }}</h3>
+        <div class="cookie-message">{!! __('biscotto.cookie_message') !!}</div>
+        <div class="cookie-buttons">
+            <button class="cookie-btn" onclick="showCookieSettings()">{{ __('biscotto.customise') }}</button>
+            <button class="cookie-btn bg" onclick="acceptCookie(true)">{{ __('biscotto.allow_all') }}</button>
+        </div>
+    </div>
+    <div class="cookie-card setting" style="display:none" id="cookie-settings">
+        <div class="header">
+            <button onclick="showCookieSettings()">
+                <img src="https://s2.svgbox.net/octicons.svg?ic=arrow-left&color=000" width="32" height="32">
+            </button>
+            <h3 style="color: black">{{ __('biscotto.preference_message') }}</h3>
+        </div>
+        <div class="biscotto__switches">
+            <div class="biscotto__switch">
+                <div class="biscotto__switch--label" style="color: black">{{ __('biscotto.necessary') }}</div>
+                <label class="biscotto__switch--input">
+                    <input type="checkbox" disabled checked>
+                    <span class="biscotto-rounded"></span>
+                </label>
+            </div>
+            <div class="biscotto__switch">
+                <div class="biscotto__switch--label" style="color: black">{{ __('biscotto.functional') }}</div>
+                <label class="biscotto__switch--input">
+                    <input type="checkbox" checked id="cookie-functional">
+                    <span class="biscotto-rounded"></span>
+                </label>
+            </div>
+            <div class="biscotto__switch">
+                <div class="biscotto__switch--label" style="color: black">{{ __('biscotto.statistics') }}</div>
+                <label class="biscotto__switch--input">
+                    <input type="checkbox" id="cookie-statistics">
+                    <span class="biscotto-rounded"></span>
+                </label>
+            </div>
+            <div class="biscotto__switch">
+                <div class="biscotto__switch--label" style="color: black">{{ __('biscotto.marketing') }}</div>
+                <label class="biscotto__switch--input">
+                    <input type="checkbox" id="cookie-marketing">
+                    <span class="biscotto-rounded"></span>
+                </label>
+            </div>
+        </div>
+        <div class="actions">
+            <a href="{{ config('biscotto.biscotto_link') ?? 'Missing config' }}"
+                class="cookie-btn bg">{{ __('biscotto.policy') }}</a>
+            <button class="cookie-btn bg" onclick="acceptCookie()">{{ __('biscotto.save') }}</button>
+        </div>
+    </div>
+</div>
+
+{{-- Add the cookie activator --}}
+<x-biscotto::cookie_activator />
 
 <script>
-    // Required varaibles
+    // Required variables
     let cookieStorageName = 'cookie_status';
 
     // Display the cookie settings
     function showCookieSettings() {
         let setting = document.querySelector('#cookie-settings');
-        if (setting.style.display === "none") {
-            setting.style.display = "block";
-        } else {
-            setting.style.display = "none";
-        }
+        const display = setting.style.display === "none" ? "block" : "none";
+        setting.style.display = display;
     }
     /**
      * Userfull Storage fuctions BEGIN 🍪🍪🍪🍪🍪
@@ -216,7 +270,7 @@
         window.localStorage.clear();
     }
     /**
-     * Userfull Storage fuctions END 🍪🍪🍪🍪🍪
+     * Userfull Storage functions END 🍪🍪🍪🍪🍪
      * */
 
 
@@ -228,23 +282,23 @@
     function getPageCookies() {
 
         // cookie is a string containing a semicolon-separated list, this split puts it into an array
-        var cookieArr = document.cookie.split(";");
+        const cookieArr = document.cookie.split(";");
 
         // This object will hold all of the key value pairs
-        var cookieObj = {};
+        const cookieObj = {};
 
         // Iterate the array of flat cookies to get their key value pair
-        for (var i = 0; i < cookieArr.length; i++) {
+        for (let i = 0; i < cookieArr.length; i++) {
 
             // Remove the standardized whitespace
-            var cookieSeg = cookieArr[i].trim();
+            const cookieSeg = cookieArr[i].trim();
 
             // Index of the split between key and value
-            var firstEq = cookieSeg.indexOf("=");
+            const firstEq = cookieSeg.indexOf("=");
 
             // Assignments
-            var name = cookieSeg.substr(0, firstEq);
-            var value = cookieSeg.substr(firstEq + 1);
+            const name = cookieSeg.substr(0, firstEq);
+            const value = cookieSeg.substr(firstEq + 1);
             cookieObj[name] = value;
         }
         return cookieObj;
@@ -268,12 +322,8 @@
      */
     function showCookie() {
         let setting = document.querySelector('#cookie-plugin');
-
-        if (setting.style.display === "none") {
-            setting.style.display = "block";
-        } else {
-            setting.style.display = "none";
-        }
+        const display = setting.style.display === "none" ? "block" : "none";
+        setting.style.display = display;
     }
 
 
@@ -289,76 +339,50 @@
 
         // Check witch item the user wants to enable or disable
         let functional = document.querySelector('#cookie-functional');
-        let statstics = document.querySelector('#cookie-statstics');
+        let statistics = document.querySelector('#cookie-statistics');
         let marketing = document.querySelector('#cookie-marketing');
 
-        // Object that use the options the customer select
-        var cookieOptions = [{
+        // Array that contains the options the customer select
+        const cookieOptions = [{
             'necessary': true
         }];
 
         // Functional
         if (enableAll) {
-            cookieOptions.push({
-                'functional': true
-            });
-            cookieOptions.push({
-                'statstics': true
-            });
-            cookieOptions.push({
-                'marketing': true
-            });
+            ["functional", "statistics", "marketing"].forEach(section => {
+                cookieOptions.push({
+                    section: true
+                });
+            })
         } else {
-            if (functional.checked) {
-                cookieOptions.push({
-                    'functional': true
-                });
-            } else {
-                cookieOptions.push({
-                    'functional': false
-                });
-            }
-
-            // Statstics
-            if (statstics.checked) {
-                cookieOptions.push({
-                    'statstics': true
-                });
-            } else {
-                cookieOptions.push({
-                    'statstics': false
-                });
-            }
-
-            // Marketing
-            if (marketing.checked) {
-                cookieOptions.push({
-                    'marketing': true
-                });
-            } else {
-                cookieOptions.push({
-                    'marketing': false
-                });
-            }
+            cookieOptions.push({
+                'functional': functional.checked === true
+            });
+            cookieOptions.push({
+                'statistics': statistics.checked === true
+            });
+            cookieOptions.push({
+                'marketing': marketing.checked === true
+            });
         }
 
         // The storage varaible that will make the user save the option if the cookie is enable
         addItemStorage(cookieStorageName, true);
-        // The varaible tha will store the user options
+        // The variable that will store the user options
         addItemStorage('cookieOptions', JSON.stringify(cookieOptions));
         // Run the script to enable or disable the cookies
         scriptEnableDisable();
-        // Delete all the cookies based in the customer actions
+        // Delete all the cookies based on the customer actions
         cookieKill();
     }
 
     // This fuction is all once the user acpper the cookie policy and on load if is accpted
-    const cookieStatstics = JSON.parse('@json(config('biscotto.cookie_statstics'))');
+    const cookieStatistics = JSON.parse('@json(config('biscotto.cookie_statistics'))');
     const cookieMarketing = JSON.parse('@json(config('biscotto.cookie_marketing'))');
     const cookieFunctional = JSON.parse('@json(config('biscotto.cookie_functional'))');
 
     /**
-     * This fuction will loop all the cookie options and disable the cookies based in the config file
+     * This fuction will loop through all the cookie options and disable the cookies based on the config file
      */
     function cookieKill() {
         // Get all the cookie conserned by the user
@@ -368,14 +392,11 @@
                     case 'functional':
                         cookieKillLoop(cookie, cookieFunctional);
                         break;
-                    case 'statstics':
-                        cookieKillLoop(cookie, cookieStatstics);
+                    case 'statistics':
+                        cookieKillLoop(cookie, cookieStatistics);
                         break;
                     case 'marketing':
                         cookieKillLoop(cookie, cookieMarketing);
-                        break;
-                    default:
-                        //console.log('normalasdasd');
                         break;
                 }
             }
@@ -389,22 +410,22 @@
      */
     function cookieKillLoop(cookie, array) {
         if (cookie == false) {
-            // Loop the config varaible to remove the cookies
+            // Loop the config variable to remove the cookies
             array.forEach(element => {
                 deleteCookie(element);
             });
         }
     }
 
-    // This fuction is all once the user acpper the cookie policy and on load if is accpted
-    const cookieIdStatstics = '{{ config('biscotto.script_cookie_statstics') }}';
+    // This fuction is all once the user accept the cookie policy and on load if is accepted
+    const cookieIdStatistics = '{{ config('biscotto.script_cookie_statistics') }}';
     const cookieIdMarketing = '{{ config('biscotto.script_cookie_marketing') }}';
     const cookieIdFunctional = '{{ config('biscotto.script_cookie_functional') }}';
 
     // This function will loop true the dom and based in the biscotto config file will disable or enable scripts
     function scriptEnableDisable() {
         // Loop the user selected options stored in the local storage
-        for (const [key, value] of Object.entries(JSON.parse(getItemStorage('cookieOptions')))) {
+        for (const value of Object.values(JSON.parse(getItemStorage('cookieOptions')))) {
             // Get all the cookie conserned options
             for (const [cookieKey, cookie] of Object.entries(value)) {
 
@@ -415,9 +436,9 @@
                     case 'functional':
                         enableOrDisableScripts(cookieIdFunctional, cookie);
                         break;
-                        // If is statstics will disable or enable the scripts
-                    case 'statstics':
-                        enableOrDisableScripts(cookieIdStatstics, cookie);
+                        // If is statistics will disable or enable the scripts
+                    case 'statistics':
+                        enableOrDisableScripts(cookieIdStatistics, cookie);
                         break;
                         // If is marketing will disable or enable the scripts
                     case 'marketing':
@@ -460,82 +481,15 @@
     }
 
 
-    // If debug is enable will displat all the avaliable cookies in the site
+    // If debug is enable will display all the available cookies on the site
     const biscottoDebug = '{{ config('biscotto.biscotto_debug') }}';
-    if (biscottoDebug == 'true') {
-        // On page fuly loaded
-        window.addEventListener('load', function() {
-            console.log('Site Avaliable Cookies', getPageCookies());
-            // console.log(showActiveScripts());
-        });
-    }
-</script>
 
-
-{{ $slot }}
-
-<div class="cookie-container" id="cookie-plugin" style="display: none;">
-    <div class="cookie-card main">
-        <h3 style="color: black">{{ __('biscotto.allow_cookie') }}</h3>
-        {!! __('biscotto.cookie_message') !!}
-        <div class="cookie-buttons">
-            <button class="cookie-btn" onclick="showCookieSettings()">{{ __('biscotto.customize') }}</button>
-            <button class="cookie-btn bg" onclick="acceptCookie(true)">{{ __('biscotto.allow_all') }}</button>
-        </div>
-    </div>
-    <div class="cookie-card setting" style="display:none" id="cookie-settings">
-        <div class="header">
-            <img src="https://s2.svgbox.net/octicons.svg?ic=arrow-left&color=000" width="32" height="32">
-            <h3 style="color: black">{{ __('biscotto.preference_message') }}</h3>
-        </div>
-        <div class="contents">
-            <div class="content">
-                <span style="color: black">{{ __('biscotto.necessary') }}</span>
-                <label class="switch">
-                    <input type="checkbox" disabled checked>
-                    <span class="biscotto-rounded"></span>
-                </label>
-            </div>
-            <div class="content">
-                <span style="color: black">{{ __('biscotto.functional') }}</span>
-                <label class="switch">
-                    <input type="checkbox" checked id="cookie-functional">
-                    <span class="biscotto-rounded"></span>
-                </label>
-            </div>
-            <div class="content">
-                <span style="color: black">{{ __('biscotto.statstics') }}</span>
-                <label class="switch">
-                    <input type="checkbox" id="cookie-statstics">
-                    <span class="biscotto-rounded"></span>
-                </label>
-            </div>
-            <div class="content">
-                <span style="color: black">{{ __('biscotto.marketing') }}</span>
-                <label class="switch">
-                    <input type="checkbox" id="cookie-marketing">
-                    <span class="biscotto-rounded"></span>
-                </label>
-            </div>
-        </div>
-        <div class="actions">
-            <a href="{{ config('biscotto.biscotto_link') ?? 'Missing config' }}"
-                class="cookie-btn bg">{{ __('biscotto.policy') }}</a>
-            <button class="cookie-btn bg" onclick="acceptCookie()">{{ __('biscotto.save') }}</button>
-        </div>
-    </div>
-</div>
-
-{{-- Add the cookie floater --}}
-<x-biscotto::cookie_floater />
-
-<script>
     // On page fuly loaded
     window.addEventListener('load', function() {
         // If the cookie is aceepted will hide on load
         if (getItemStorage(cookieStorageName)) {
             if (getItemStorage(cookieStorageName)) {
-                let setting = document.querySelector('#cookie-plugin');
+                const setting = document.querySelector('#cookie-plugin');
                 setting.style.display = "none";
                 scriptEnableDisable();
                 cookieKill();
@@ -544,6 +498,10 @@
             // If the cookie is not aceepted will show on load
             let setting = document.querySelector('#cookie-plugin');
             setting.style.display = "block";
+        }
+
+        if (biscottoDebug == 'true') {
+            console.log('Site Available Cookies', getPageCookies());
         }
     });
 </script>

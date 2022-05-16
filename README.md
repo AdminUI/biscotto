@@ -14,7 +14,7 @@
 - All define using config variables
 - Lightweight pure vanilia javascript
 
-### How  to use ?
+### How to use ?
 
 Note that in this exemple you need to first load your Analytics instead of using src add data-src this will prevent you script to call google from example after you next step you need to add a id so in the cookie package now what to enable or disable those id can be change in the config variable biscotto.php.
 
@@ -24,7 +24,7 @@ Example 1
 <x-biscotto::biscotto>
 <!-- Global site tag (gtag.js) - Google Analytics -->
  <script async
-  id="script_cookie_statstics" // The id that comes from the config file
+  id="script_cookie_statistics" // The id that comes from the config file
   data-src="https://www.googletagmanager.com/gtag/js?id=UA-152696431-2"
  ></script>
   <script>
@@ -46,14 +46,21 @@ Example 2
 <iframe width="560" height="315" id="script_cookie_functional" data-src="https://www.youtube.com/embed/zckH4xalOns" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
 ```
 
-
-
 ### Scripts Info
 
 Note that scripts and iframes don,t need to go inside the <x-biscotto::biscotto> component you can add in any where in the site because we use the dom so if you have the right tag it will find and enable the script same works for iframe example, note the dara-src and the id.
 
 ```html
-<iframe width="560" height="315" id="script_cookie_statstics" data-src="https://www.youtube.com/embed/zckH4xalOns" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+<iframe
+  width="560"
+  height="315"
+  id="script_cookie_statistics"
+  data-src="https://www.youtube.com/embed/zckH4xalOns"
+  title="YouTube video player"
+  frameborder="0"
+  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+  allowfullscreen
+></iframe>
 ```
 
 ### How disable unwanted cookies
@@ -75,7 +82,7 @@ There is no way to make this process automatic and effective but you can enable 
     'cookie_functional' => [
 		'example','another'
     ],
-    'cookie_statstics' => [
+    'cookie_statistics' => [
         '_ga','_gid','_gat_gtag_UA_124396431_2'
     ],
     'cookie_marketing' => [
@@ -85,8 +92,8 @@ There is no way to make this process automatic and effective but you can enable 
 
 ### Custom message
 
-You can also customize the message and the link for the cookie popup inside the config files.
+You can also customise the message and the link for the cookie popup inside the config files.
 
 ## Notice
 
-The legislation is pretty very vague on how to display the warning, which texts are necessary, and what options you need to provide. This  package will go a long way towards compliance, but if you want to be 100% sure that your website is ok, you should consult a legal expert.
+The legislation is pretty very vague on how to display the warning, which texts are necessary, and what options you need to provide. This package will go a long way towards compliance, but if you want to be 100% sure that your website is ok, you should consult a legal expert.

@@ -1,12 +1,10 @@
 <style>
     .float {
         position: fixed;
-        /* width:60px;
-        height:60px; */
-        bottom: 40px;
+        bottom: 5px;
         left: 5px;
-        background-color: {{ config('biscotto.button_collor') }};
-        color: #FFF;
+        background-color: {{ config('biscotto.button_background_colour') }};
+        color: {{ config('biscotto.button_colour') }};
         border: 2px solid white;
         padding: 1px;
         border-radius: 9px;
@@ -33,15 +31,13 @@
 
     function enableCookie() {
         // Find the cookie
-        let cookie = document.querySelector('#cookie_popup');
+        const cookie = document.querySelector('#cookie_popup');
         // Make the cookie visible
         cookie.style.display = "block";
         cookie.style.opacity = "0.2";
     }
 
-    setTimeout(() => {
-        enableCookie();
-    }, 1000);
+    setTimeout(enableCookie, 1000);
 </script>
 
 <a href="#" class="float" onclick="showCookie()" onmouseover="onCookiePopup()" onmouseout="offCookiePopup()"
