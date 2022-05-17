@@ -180,14 +180,14 @@
             <div class="biscotto__switch">
                 <div class="biscotto__switch--label" style="color: black">{{ __('biscotto.necessary') }}</div>
                 <label class="biscotto__switch--input">
-                    <input type="checkbox" disabled checked>
+                    <input type="checkbox" id="cookie-necessary" disabled checked>
                     <span class="biscotto-rounded"></span>
                 </label>
             </div>
             <div class="biscotto__switch">
                 <div class="biscotto__switch--label" style="color: black">{{ __('biscotto.functional') }}</div>
                 <label class="biscotto__switch--input">
-                    <input type="checkbox" checked id="cookie-functional">
+                    <input type="checkbox" id="cookie-functional">
                     <span class="biscotto-rounded"></span>
                 </label>
             </div>
@@ -285,22 +285,11 @@
         const cookieArr = document.cookie.split(";");
 
         // This object will hold all of the key value pairs
-        const cookieObj = {};
-
-        // Iterate the array of flat cookies to get their key value pair
-        for (let i = 0; i < cookieArr.length; i++) {
-
-            // Remove the standardized whitespace
-            const cookieSeg = cookieArr[i].trim();
-
-            // Index of the split between key and value
-            const firstEq = cookieSeg.indexOf("=");
-
-            // Assignments
-            const name = cookieSeg.substr(0, firstEq);
-            const value = cookieSeg.substr(firstEq + 1);
-            cookieObj[name] = value;
-        }
+        const cookieObj = cookieArr.reduce((acc, curr) => {
+            const [key, value] = curr.trim().split("=");
+            acc[key] = value;
+            return acc;
+        }, {});
         return cookieObj;
     }
 
@@ -317,7 +306,7 @@
 
 
     /**
-     * Display or hide the cookie settings
+     * Display or hide the cookie settings – Used in cookie_activator.blade.php
      *
      */
     function showCookie() {
@@ -337,7 +326,7 @@
         let setting = document.querySelector('#cookie-plugin');
         setting.style.display = "none";
 
-        // Check witch item the user wants to enable or disable
+        // Check which item the user wants to enable or disable
         let functional = document.querySelector('#cookie-functional');
         let statistics = document.querySelector('#cookie-statistics');
         let marketing = document.querySelector('#cookie-marketing');
@@ -351,7 +340,7 @@
         if (enableAll) {
             ["functional", "statistics", "marketing"].forEach(section => {
                 cookieOptions.push({
-                    section: true
+                    [section]: true
                 });
             })
         } else {
@@ -374,12 +363,14 @@
         scriptEnableDisable();
         // Delete all the cookies based on the customer actions
         cookieKill();
+
+        setInitialState();
     }
 
-    // This fuction is all once the user acpper the cookie policy and on load if is accpted
+    // This fuction is all once the user accept the cookie policy and on load if is accepted
+    const cookieFunctional = JSON.parse('@json(config('biscotto.cookie_functional'))');
     const cookieStatistics = JSON.parse('@json(config('biscotto.cookie_statistics'))');
     const cookieMarketing = JSON.parse('@json(config('biscotto.cookie_marketing'))');
-    const cookieFunctional = JSON.parse('@json(config('biscotto.cookie_functional'))');
 
     /**
      * This fuction will loop through all the cookie options and disable the cookies based on the config file
@@ -418,11 +409,11 @@
     }
 
     // This fuction is all once the user accept the cookie policy and on load if is accepted
+    const cookieIdFunctional = '{{ config('biscotto.script_cookie_functional') }}';
     const cookieIdStatistics = '{{ config('biscotto.script_cookie_statistics') }}';
     const cookieIdMarketing = '{{ config('biscotto.script_cookie_marketing') }}';
-    const cookieIdFunctional = '{{ config('biscotto.script_cookie_functional') }}';
 
-    // This function will loop true the dom and based in the biscotto config file will disable or enable scripts
+    // This function will loop through the DOM and based on the biscotto config file will disable or enable scripts
     function scriptEnableDisable() {
         // Loop the user selected options stored in the local storage
         for (const value of Object.values(JSON.parse(getItemStorage('cookieOptions')))) {
@@ -430,7 +421,7 @@
             for (const [cookieKey, cookie] of Object.entries(value)) {
 
                 // Now check the option we try to check
-                // Note that you need to the add id in the script or iframe you want to enable or disable
+                // Note that you need to the add ID in the script or iframe you want to enable or disable
                 switch (cookieKey) {
                     // If is functional will disable or enable the scripts
                     case 'functional':
@@ -443,9 +434,6 @@
                         // If is marketing will disable or enable the scripts
                     case 'marketing':
                         enableOrDisableScripts(cookieIdMarketing, cookie);
-                        break;
-                    default:
-                        //console.log('normalasdasd');
                         break;
                 }
             }
@@ -480,25 +468,41 @@
         }
     }
 
+    function setInitialState() {
+        const inputs = {
+            necessary: document.querySelector('#cookie-necessary'),
+            functional: document.querySelector('#cookie-functional'),
+            statistics: document.querySelector('#cookie-statistics'),
+            marketing: document.querySelector('#cookie-marketing')
+        }
+
+        const items = JSON.parse(getItemStorage("cookieOptions"));
+
+        items.forEach((item) => {
+            const [key, status] = Object.entries(item)[0];
+            inputs[key].checked = status;
+        })
+    }
+
 
     // If debug is enable will display all the available cookies on the site
     const biscottoDebug = '{{ config('biscotto.biscotto_debug') }}';
 
     // On page fuly loaded
-    window.addEventListener('load', function() {
-        // If the cookie is aceepted will hide on load
+    window.addEventListener('DOMContentLoaded', function() {
+        // If the cookie is accepted will hide on load
+        const setting = document.querySelector('#cookie-plugin');
+
         if (getItemStorage(cookieStorageName)) {
-            if (getItemStorage(cookieStorageName)) {
-                const setting = document.querySelector('#cookie-plugin');
-                setting.style.display = "none";
-                scriptEnableDisable();
-                cookieKill();
-            }
+            setting.style.display = "none";
+            scriptEnableDisable();
+            cookieKill();
         } else {
-            // If the cookie is not aceepted will show on load
-            let setting = document.querySelector('#cookie-plugin');
+            // If the cookie is not accepted will show on load
             setting.style.display = "block";
         }
+
+        setInitialState();
 
         if (biscottoDebug == 'true') {
             console.log('Site Available Cookies', getPageCookies());
