@@ -476,7 +476,7 @@
             marketing: document.querySelector('#cookie-marketing')
         }
 
-        const items = JSON.parse(getItemStorage("cookieOptions"));
+        const items = JSON.parse(getItemStorage("cookieOptions") || []);
 
         items.forEach((item) => {
             const [key, status] = Object.entries(item)[0];
